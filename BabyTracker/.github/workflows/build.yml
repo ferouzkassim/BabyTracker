@@ -1,68 +1,57 @@
 name: Build iOS IPA
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build-ios:
+  build:
     runs-on: macos-14
-    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET 10
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
-      - name: Install MAUI iOS
+      
+      - name: Install MAUI
         run: dotnet workload install maui-ios
-
-      - name: Restore packages
+      
+      - name: Restore
         run: dotnet restore
-
-      - name: Build IPA
+      
+      - name: Build
+        run: dotnet build -f net10.0-ios -c Release
+      
+      - name: Publish
+        run: dotnet publish -f net10.0-ios -c Release -r ios-arm64 --no-build
+      
+      - name: Find App
         run: |
-          dotnet publish \
-            -f net10.0-ios \
-            -c Release \
-            -r ios-arm64 \
-            -p:ArchiveOnBuild=true \
-            -p:EnableAssemblyILStripping=false
-
-      - name: Find and copy IPA
+          echo "=== Finding .app bundle ==="
+          APP=$(find $HOME/.net -name "*.app" -type d 2>/dev/null | grep -v "xcframeworks" | head -1)
+          echo "App: $APP"
+          if [ -n "$APP" ]; then
+            ls -la "$APP"
+          fi
+      
+      - name: Create IPA
         run: |
-          # Find the IPA
-          IPA_FILE=$(find /Users/runner -name "*.ipa" -type f 2>/dev/null | head -1)
-          
-          if [ -z "$IPA_FILE" ]; then
-            IPA_FILE=$(find ~/Library -name "*.ipa" -type f 2>/dev/null | head -1)
+          APP=$(find $HOME/.net -name "BabyTracker.app" -type d 2>/dev/null | head -1)
+          if [ -z "$APP" ]; then
+            echo "BabyTracker.app not found, searching all .app bundles..."
+            find $HOME/.net -name "*.app" -type d 2>/dev/null
+            exit 1
           fi
-          
-          if [ -z "$IPA_FILE" ]; then
-            IPA_FILE=$(find ~/.net -name "*.ipa" -type f 2>/dev/null | head -1)
-          fi
-          
-          echo "Found IPA: $IPA_FILE"
-          
-          if [ -n "$IPA_FILE" ] && [ -f "$IPA_FILE" ]; then
-            mkdir -p ./artifacts
-            cp "$IPA_FILE" ./artifacts/BabyTracker.ipa
-            echo "IPA copied to ./artifacts/BabyTracker.ipa"
-            ls -la ./artifacts/
-          else
-            echo "ERROR: No IPA file found"
-            echo "Listing .app bundles:"
-            find /Users/runner -name "*.app" -type d 2>/dev/null | head -5
-          fi
-
-      - name: Upload IPA
+          mkdir -p Payload
+          cp -r "$APP" Payload/
+          zip -r BabyTracker.ipa Payload
+          rm -rf Payload
+          ls -la BabyTracker.ipa
+      
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: BabyTracker
-          path: ./artifacts/*.ipa
-          if-no-files-found: warn
-          retention-days: 7
+          path: BabyTracker.ipa
+          if-no-files-found: error
