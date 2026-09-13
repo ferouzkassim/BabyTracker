@@ -1,0 +1,21 @@
+## Build results
+bin/
+obj/
+
+## IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+## macOS
+.DS_Store
+
+## NuGet
+*.nupkg
+packages/
+
+## Build
+build/
+artifacts/
+*.ipa
