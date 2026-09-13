@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "iOS Local": {
+      "commandName": "Project",
+      "nativeVariant": "iOS"
+    },
+    "iOS Simulator": {
+      "commandName": "Project",
+      "nativeVariant": "iOSSimulator"
+    }
+  }
+}

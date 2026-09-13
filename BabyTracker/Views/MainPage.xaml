@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:BabyTracker.Models"
+             x:Class="BabyTracker.Views.MainPage"
+             Title="Baby Tracker">
+
+    <ScrollView>
+        <Grid Padding="20" RowSpacing="16">
+
+            <!-- Header -->
+            <Grid Grid.Row="0" ColumnSpacing="12">
+                <Label Text="🍼" FontSize="36" VerticalOptions="Center" />
+                <Label Text="Baby Tracker" 
+                       FontSize="28" 
+                       FontAttributes="Bold" 
+                       VerticalOptions="Center"
+                       Grid.Column="1" />
+            </Grid>
+
+            <!-- Current Time Display -->
+            <Frame Grid.Row="1" 
+                   Style="{StaticResource CardFrame}"
+                   BackgroundColor="{StaticResource PrimaryColor}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Current Time" 
+                           FontSize="14" 
+                           TextColor="White" 
+                           Opacity="0.8" />
+                    <Label x:Name="CurrentTimeLabel" 
+                           FontSize="32" 
+                           FontAttributes="Bold" 
+                           TextColor="White" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Today's Summary -->
+            <Frame Grid.Row="2" Style="{StaticResource CardFrame}">
+                <Grid ColumnSpacing="16">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label x:Name="WakeupsTodayCount" 
+                               Text="0" 
+                               FontSize="28" 
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource PrimaryColor}"
+                               HorizontalOptions="Center" />
+                        <Label Text="Wakeups Today" 
+                               FontSize="12" 
+                               TextColor="{StaticResource TextSecondaryColor}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                    <BoxView WidthRequest="1" Color="{StaticResource BorderColor}" Grid.Column="1" />
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center" Grid.Column="2">
+                        <Label x:Name="FeedingsTodayCount" 
+                               Text="0" 
+                               FontSize="28" 
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource SecondaryColor}"
+                               HorizontalOptions="Center" />
+                        <Label Text="Feedings Today" 
+                               FontSize="12" 
+                               TextColor="{StaticResource TextSecondaryColor}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- Wakeup Button -->
+            <Button Grid.Row="3"
+                    x:Name="RecordWakeupButton"
+                    Text="☀️ Record Wakeup"
+                    Style="{StaticResource PrimaryButton}"
+                    Clicked="OnRecordWakeupClicked" />
+
+            <!-- Feeding Button -->
+            <Button Grid.Row="4"
+                    x:Name="RecordFeedingButton"
+                    Text="🍼 Record Feeding"
+                    Style="{StaticResource SecondaryButton}"
+                    Clicked="OnRecordFeedingClicked" />
+
+            <!-- Last Activity -->
+            <Frame Grid.Row="5" Style="{StaticResource CardFrame}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Last Activity" 
+                           FontSize="16" 
+                           FontAttributes="Bold" 
+                           TextColor="{StaticResource TextColor}" />
+                    <Label x:Name="LastActivityLabel" 
+                           Text="No activities recorded yet" 
+                           FontSize="14" 
+                           TextColor="{StaticResource TextSecondaryColor}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- View History Button -->
+            <Button Grid.Row="6"
+                    Text="📋 View History"
+                    Style="{StaticResource ButtonBase}"
+                    BackgroundColor="{StaticResource SurfaceColor}"
+                    TextColor="{StaticResource TextColor}"
+                    BorderColor="{StaticResource BorderColor}"
+                    BorderWidth="1"
+                    Clicked="OnViewHistoryClicked" />
+
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

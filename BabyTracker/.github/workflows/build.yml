@@ -1,0 +1,49 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui maui-ios
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build IPA
+        run: |
+          dotnet publish \
+            -f net10.0-ios \
+            -c Release \
+            -r ios-arm64 \
+            -p:ArchiveOnBuild=true
+
+      - name: Find IPA
+        id: find-ipa
+        run: |
+          IPA=$(find ~/Library/Developer/Xcode/DerivedData -name "*.ipa" -type f 2>/dev/null | head -1)
+          if [ -z "$IPA" ]; then
+            IPA="bin/Release/net10.0-ios/ios-arm64/publish/BabyTracker.ipa"
+          fi
+          echo "ipa_path=$IPA" >> $GITHUB_OUTPUT
+          echo "Found IPA at: $IPA"
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: BabyTracker
+          path: ${{ steps.find-ipa.outputs.ipa_path }}
+          retention-days: 7

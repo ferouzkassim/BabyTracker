@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <circle cx="64" cy="64" r="64" fill="#FF6B9D"/>
+  <text x="64" y="85" font-size="70" text-anchor="middle" fill="white">🍼</text>
+</svg>
