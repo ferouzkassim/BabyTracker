@@ -9,10 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
+      - name: Install .NET 10
+        run: |
+          curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 10.0
+          echo "$HOME/.dotnet" >> $GITHUB_PATH
+      
+      - name: Check .NET
+        run: dotnet --version
       
       - name: Install MAUI
         run: dotnet workload install maui-ios
@@ -29,18 +32,13 @@ jobs:
       - name: Find App
         run: |
           echo "=== Finding .app bundle ==="
-          APP=$(find $HOME/.net -name "*.app" -type d 2>/dev/null | grep -v "xcframeworks" | head -1)
-          echo "App: $APP"
-          if [ -n "$APP" ]; then
-            ls -la "$APP"
-          fi
+          find $HOME/.net -name "*.app" -type d 2>/dev/null | head -10
       
       - name: Create IPA
         run: |
           APP=$(find $HOME/.net -name "BabyTracker.app" -type d 2>/dev/null | head -1)
           if [ -z "$APP" ]; then
-            echo "BabyTracker.app not found, searching all .app bundles..."
-            find $HOME/.net -name "*.app" -type d 2>/dev/null
+            echo "BabyTracker.app not found"
             exit 1
           fi
           mkdir -p Payload
